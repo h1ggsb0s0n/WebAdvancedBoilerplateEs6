@@ -4,7 +4,7 @@ import express from "express";
 import db from "./db.js"
 
 const app = express();
-const port = 3000;
+const port = 3250;
 
 const mongoose = db.database()
 

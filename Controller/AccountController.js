@@ -1,5 +1,7 @@
 import account from "../Model/account.js"
 import express from "express";
+import config from "../config.js";
+import jwt from "jsonwebtoken";
 
 
 function setup(app, port, mongoose) {
@@ -87,17 +89,56 @@ app.delete("/account/delete/:id",async (req, res) => {
 --------------------- Unimplemented methdos
 */
 
+  app.post("/user/signup", async (req, res) => {
+    const body = req.body;
+    try {
+      let user = await account.findOne({ email: body.email});
+
+      if (!user) {
+
+        const newUser = await account.create(body);
+        await newUser.save();
+        const token = jwt.sign({ id: newUser._id }, config.tokenPw, {
+          expiresIn: "24h",
+        });
+
+        return res.status(200).json({ msg: "user Name already exists", token });
+      } else{
+        return res
+      .status(422)
+      .json({ errors: ["this email is already registered "] });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ errors: ["some error occured"] });
+    }
+  });
 
 
     
 
   //Sign in
   app.post("/account/signin", async (req, res) => {
-    try {
-      res.status(200).send("Not Implemented");
-    } catch (error) {
-      res.status(200).send("Not Implemented");
+    const { email, password } = req.body;
+
+  try {
+    let user = await account.findOne({ email });
+
+    if (!user) return res.status(422).json({ errors: ["no such user exists"] });
+
+    if (await user.comparePassword(password)) {
+      const token = jwt.sign({ id: user._id }, config.tokenPw, {
+        expiresIn: "24h",
+      });
+
+      return res.status(200).json({ msg: "user logged in", token });
     }
+
+    return res.status(403).json({ errors: ["invalid password"] });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ errors: ["some error occured"] });
+  }
   });
 
   //recover
