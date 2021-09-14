@@ -1,1 +1,2 @@
-# rest_w3
+# Boilerblate mit MongoDB in Es6 erkennbar in app.js type: "module"
+
