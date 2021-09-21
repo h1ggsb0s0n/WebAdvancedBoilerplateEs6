@@ -2,7 +2,7 @@ import account from "../Model/account.js"
 import express from "express";
 import config from "../config.js";
 import jwt from "jsonwebtoken";
-
+import validateUser from "../Middleware/ValidateUser.js";
 
 function setup(app, port, mongoose) {
   app.use(express.json());
@@ -11,7 +11,7 @@ function setup(app, port, mongoose) {
     console.log(`App listening at http://localhost:${port}.`);
   });
 
-
+    /*
     //Erstelle einn Account
     app.post("/account/create", async (req, res) => {
       const body = req.body;
@@ -21,11 +21,11 @@ function setup(app, port, mongoose) {
       } catch (error) {
         res.status(204).send("Account konnte nicht generiert werden");
       }
-    });
+    });*/
 
 
     //Hole Einen Account
-    app.get("/account/:id", async (req, res) => {
+    app.get("/account/:id",validateUser, async (req, res) => {
       const id = req.params.id;
       try {
         const ret = await account.findById(id);
@@ -38,7 +38,7 @@ function setup(app, port, mongoose) {
 
 
 //Überschreibt einn accoutn
-app.put("/account/update/:id", async (req, res) => {
+app.put("/account/update/:id", validateUser, async (req, res) => {
   var id = req.params.id;
   const body = req.body;
 
@@ -53,7 +53,7 @@ app.put("/account/update/:id", async (req, res) => {
 });
 
 //Aktualisert einen Account
-app.patch("/account/update/:id",async (req, res) => {
+app.patch("/account/update/:id", validateUser,async (req, res) => {
   const id = req.params.id;
   const body = req.body;
 
@@ -68,7 +68,7 @@ app.patch("/account/update/:id",async (req, res) => {
 });
 
 //Löscht einen Account
-app.delete("/account/delete/:id",async (req, res) => {
+app.delete("/account/delete/:id",validateUser, async (req, res) => {
   const id = req.params.id;
   try {
       const ret = await account.deleteOne( {_id: id} );
@@ -78,10 +78,6 @@ app.delete("/account/delete/:id",async (req, res) => {
     }
 
   });
-
-
-
-
 
 
 

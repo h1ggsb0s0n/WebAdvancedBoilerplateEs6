@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import config from "../config.js";
+
 const { Schema } = mongoose;
 
 const accountSchema = new Schema({
@@ -55,6 +58,21 @@ accountSchema.methods.comparePassword = async function (password) {
 
     return false;
   }
+};
+
+accountSchema.statics.validateToken = function (token, cb) {
+  let user = this;
+  jwt.verify(token, config.tokenPw, function (err, decoded) {
+    if (err) {
+      cb(err);
+    }
+    user
+      .findById(decoded.id)
+      .then((UserInfo) => {
+        cb(null, UserInfo);
+      })
+      .catch((err) => cb(err));
+  });
 };
 
 
