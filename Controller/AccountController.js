@@ -64,7 +64,7 @@ app.patch("/account/update/:id",async (req, res) => {
     } catch (error) {
       res.status(200).send("Der Account konnte nicht überschrieben werdcen");
     }
- 
+
 });
 
 //Löscht einen Account
@@ -102,7 +102,7 @@ app.delete("/account/delete/:id",async (req, res) => {
           expiresIn: "24h",
         });
 
-        return res.status(200).json({ msg: "user Name already exists", token });
+        return res.status(200).json({ msg: "you're successfully registered", token });
       } else{
         return res
       .status(422)
